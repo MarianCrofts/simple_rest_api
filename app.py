@@ -46,6 +46,9 @@ def get_users():
 def update_users():
     if request.is_json:
         edit_user = request.get_json()
+        if "id" not in edit_user:
+            return {"error": "User id required to edit a user"}, 400
+
         for user in users:
             if user["id"] == edit_user["id"]:
                 if "name" in edit_user:
@@ -64,7 +67,7 @@ def add_user():
         user = request.get_json()
         user["id"] = _find_next_id()
         # Check that name, age, and games list are all populated
-        if user["name"] and user["age"] and user["games_and_playcount"]:
+        if ("name" in user) and ("age" in user) and ("games_and_playcount" in user):
             users.append(user)
             return user, 200
         else:
@@ -75,6 +78,9 @@ def add_user():
 def delete_user():
     if request.is_json:
         deleted_user = request.get_json()
+        if "id" not in deleted_user:
+            return {"error": "User id required to delete a user"}, 400
+
         del_id = int(deleted_user["id"])
 
         # Check if ID to be deleted is in users list
